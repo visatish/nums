@@ -22,7 +22,7 @@
 
 from nums.core import settings
 from nums.core.systems.filesystem import FileSystem
-from nums.core.systems import numpy_compute
+from nums.core.systems import numpy_compute, cupy_compute
 from nums.core.systems.systems import System, SerialSystem, RaySystem
 from nums.core.systems.schedulers import RayScheduler, TaskScheduler, BlockCyclicScheduler
 from nums.core.array.application import ArrayApplication
@@ -41,7 +41,8 @@ def init():
     system_name = settings.system_name
 
     compute_module = {
-        "numpy": numpy_compute
+        "numpy": numpy_compute,
+        "cupy": cupy_compute
     }[settings.compute_name]
 
     if system_name == "serial":
