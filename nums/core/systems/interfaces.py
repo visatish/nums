@@ -85,6 +85,12 @@ class ComputeInterface(object):
         """
         raise NotImplementedError()
 
+    def from_np(self, arr):
+        raise NotImplementedError()
+
+    def to_np(self, arr):
+        raise NotImplementedError()
+
     def empty(self, grid_entry: Tuple, grid_meta: Dict, syskwargs: Dict):
         raise NotImplementedError()
 

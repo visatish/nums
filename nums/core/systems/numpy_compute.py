@@ -95,6 +95,12 @@ class ComputeCls(ComputeImp):
     # pylint: disable=no-member, unused-variable
 
     # I/O operations.
+    def from_np(self, arr):
+        return arr
+
+    def to_np(self, arr):
+        return arr
+
     def touch(self, arr):
         return isinstance(arr, np.ndarray)
 

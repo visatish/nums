@@ -120,7 +120,8 @@ class TaskScheduler(RayScheduler):
         return ray.get(object_ids, timeout=timeout)
 
     def remote(self, function: FunctionType, remote_params: dict):
-        r = ray.remote(num_cpus=1, **remote_params)
+#        r = ray.remote(num_cpus=1, **remote_params)
+        r = ray.remote(num_cpus=1, num_gpus=1/4, **remote_params)
         return r(function)
 
     def register(self, name: str, func: callable, remote_params: dict = None):

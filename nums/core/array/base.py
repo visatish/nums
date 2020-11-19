@@ -347,5 +347,5 @@ class BlockArrayBase(object):
             end = start + entry_shape
             slices = tuple(map(lambda item: slice(*item), zip(*(start, end))))
             block = self.blocks[grid_entry]
-            result[slices] = blocks[block_index].reshape(block.shape)
+            result[slices] = self.system.compute_imp.to_np(self.system, blocks[block_index].reshape(block.shape))
         return result

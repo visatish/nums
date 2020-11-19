@@ -37,6 +37,12 @@ class ComputeCls(ComputeImp):
     # pylint: disable=no-member, unused-variable
 
     # I/O operations.
+    def from_np(self, arr):
+        return cp.asarray(arr)
+
+    def to_np(self, arr):
+        return cp.asnumpy(arr)
+
     def touch(self, arr):
         return isinstance(arr, cp.ndarray)
 
@@ -125,7 +131,9 @@ class ComputeCls(ComputeImp):
         return arr.astype(dtype)
 
     def sum_reduce(self, *arrs):
-        return cp.add.reduce(arrs)
+        # (vsatish) Cupy has no add.reduce - not sure what the right thing to do here is
+        from functools import reduce
+        return reduce(cp.add, arrs)
 
     def transpose(self, arr):
         return arr.T
@@ -213,4 +221,6 @@ class ComputeCls(ComputeImp):
     # Logic
 
     def logical_and(self, *bool_list):
-        return cp.all(bool_list)
+#        return cp.all(bool_list)
+        import numpy as np
+        return np.all(bool_list)

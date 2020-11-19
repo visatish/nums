@@ -40,22 +40,29 @@ def app_inst(request):
 
 
 def get_app(mode):
+    import os
+    from nums.core.systems import cupy_compute
+    compute_module = {
+        "numpy": numpy_compute,
+        "cupy": cupy_compute
+    }[os.environ.get("NUMS_COMPUTE", "numpy")]
+
     if mode == "serial":
-        system: System = SerialSystem(compute_module=numpy_compute)
+        system: System = SerialSystem(compute_module=compute_module)
     elif mode.startswith("ray"):
-        ray.init(num_cpus=4)
+        ray.init(num_cpus=4, num_gpus=1)
         if mode == "ray-task":
-            scheduler: RayScheduler = TaskScheduler(compute_module=numpy_compute,
+            scheduler: RayScheduler = TaskScheduler(compute_module=compute_module,
                                                     use_head=True)
         elif mode == "ray-cyclic":
             cluster_shape = (1, 1)
-            scheduler: RayScheduler = BlockCyclicScheduler(compute_module=numpy_compute,
+            scheduler: RayScheduler = BlockCyclicScheduler(compute_module=compute_module,
                                                            cluster_shape=cluster_shape,
                                                            use_head=True,
                                                            verbose=True)
         else:
             raise Exception()
-        system: System = RaySystem(compute_module=numpy_compute,
+        system: System = RaySystem(compute_module=compute_module,
                                    scheduler=scheduler)
     else:
         raise Exception()

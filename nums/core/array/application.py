@@ -181,7 +181,7 @@ class ArrayApplication(object):
 
     def array(self, array: np.ndarray, block_shape: tuple = None):
         assert len(array.shape) == len(block_shape)
-        return BlockArray.from_np(array,
+        return BlockArray.from_np(self._system.compute_imp.from_np(self._system, array),
                                   block_shape=block_shape,
                                   copy=False,
                                   system=self._system)
