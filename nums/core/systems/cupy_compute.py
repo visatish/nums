@@ -71,7 +71,7 @@ class ComputeCls(ComputeImp):
         if rfunc_name not in ("random", "integers"):
             # Only random supports sampling of a specific type.
             result = result.astype(dtype)
-        return result
+        return cp.asarray(result)
 
     def create_block(self, *src_arrs, src_params, dst_params, dst_shape, dst_shape_bc):
         # TODO (hme): Test putting dst_shape as first param.
