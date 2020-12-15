@@ -40,19 +40,23 @@ if __name__ == '__main__':
 
                     timings = []
                     for i in range(NUM_ITERS+1):
+                        print_func = print if i != 0 else lambda _: None
                         with Timer(
                             '%d GPUs and size %d iter %d' % (num_gpus, mat_size, i),
-                            print_func=print if i != 0 else lambda _: None
+                            print_func=print_func
                         ) as t:
-                            X = app.random_state().uniform(
-                                0.0,
-                                1.0,
-                                X_shape,
-                                (int(X_shape[0] / num_gpus), X_shape[1]),
-                                 dtype=np.float32
-                            )
-                            X_sqr = X.T @ X
-                            X_sqr = X_sqr.touch()
+                            with Timer('Init', print_func=print_func):
+                                X = app.random_state().uniform(
+                                    0.0,
+                                    1.0,
+                                    X_shape,
+                                    (int(X_shape[0] / num_gpus), X_shape[1]),
+                                     dtype=np.float32
+                                )
+                                X.touch()
+                            with Timer('Comp', print_func=print_func):
+                                X_sqr = X.T @ X
+                                X_sqr.touch()
                         timings.append(t.time_elapsed)
                     print(
                         'Mean time for %d GPUs and size %d: %.3fs.' %
