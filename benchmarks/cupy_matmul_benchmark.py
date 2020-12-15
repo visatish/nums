@@ -21,17 +21,24 @@ if __name__ == '__main__':
             with Timer(
                 'Size %d iter %d' % (mat_size, i),
                 print_func=print_func
-            ) as t:
-                with Timer('Init', print_func=print_func):
+            ) as tt:
+                with Timer('Init', print_func=print_func) as it:
                     X = cp.asarray(
                         np.random.uniform(
                             size=list_prod(X_shape)
                         ).astype(np.float32).reshape(X_shape)
                     )
                     cp.cuda.Device(0).synchronize()
-                with Timer('Comp', print_func=print_func):
+                with Timer('Comp', print_func=print_func) as ct:
                     X_sqr = X.T @ X
                     cp.cuda.Device(0).synchronize()
-            timings.append(t.time_elapsed)
-        print('Mean time for size %d: %.3fs.' % (mat_size, np.mean(timings[1:])))
+            timings.append(
+                (it.time_elapsed, ct.time_elapsed, tt.time_elapsed)
+            )
+        mean_times = np.mean(np.asarray(timings), axis=0)
+        print('Mean time for size %d:' % mat_size)
+        print('  Initialization time: %.3fs' % mean_times[0])
+        print('  Computation time: %.3fs' % mean_times[1])
+        print('  Total time: %.3fs' % mean_times[2])
+
         print('')

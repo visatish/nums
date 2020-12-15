@@ -44,8 +44,8 @@ if __name__ == '__main__':
                         with Timer(
                             '%d GPUs and size %d iter %d' % (num_gpus, mat_size, i),
                             print_func=print_func
-                        ) as t:
-                            with Timer('Init', print_func=print_func):
+                        ) as tt:
+                            with Timer('Init', print_func=print_func) as it:
                                 X = app.random_state().uniform(
                                     0.0,
                                     1.0,
@@ -54,14 +54,20 @@ if __name__ == '__main__':
                                      dtype=np.float32
                                 )
                                 X.touch()
-                            with Timer('Comp', print_func=print_func):
+                            with Timer('Comp', print_func=print_func) as ct:
                                 X_sqr = X.T @ X
                                 X_sqr.touch()
-                        timings.append(t.time_elapsed)
+                        timings.append(
+                            (it.time_elapsed, ct.time_elapsed, tt.time_elapsed)
+                        )
+                    mean_times = np.mean(np.asarray(timings), axis=0)
                     print(
-                        'Mean time for %d GPUs and size %d: %.3fs.' %
-                        (num_gpus, mat_size, np.mean(timings[1:]))
+                        'Mean time for %d GPUs and size %d:' %
+                        (num_gpus, mat_size)
                     )
+                    print('  Initialization time: %.3fs' % mean_times[0])
+                    print('  Computation time: %.3fs' % mean_times[1])
+                    print('  Total time: %.3fs' % mean_times[2])
                     print('')
                 finally:
                     system.shutdown()
